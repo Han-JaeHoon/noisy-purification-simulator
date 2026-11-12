@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Type-3 Entanglement Purification Dynamics</title>
-  <script type="module" crossorigin src="/noisy-purification-simulator/assets/index-Dea7_DMj.js"></script>
-  <link rel="stylesheet" crossorigin href="/noisy-purification-simulator/assets/index-DCoz3qUn.css">
+  <script type="module" crossorigin src="/noisy-purification-simulator/assets/index-iN051PBB.js"></script>
+  <link rel="stylesheet" crossorigin href="/noisy-purification-simulator/assets/index-12zYiLPf.css">
 </head>
 <body>
   <header class="top">
@@ -57,20 +57,20 @@
       </div>
       <div class="ctl ctl-q">
         <label for="q-num">CNOT noise q</label>
-        <div id="q-wrap" class="range-wrap" title="bands: green = P_B global attractor (q < q_bi) · amber = bistable (q_bi < q < q_SN) · red = Z global attractor (q > q_SN)">
+        <div id="q-wrap" class="range-wrap" title="bands: green = P_B global attractor (q < q_dep) · amber = bistable (q_dep < q < q_loss) · red = Z global attractor (q > q_loss)">
           <div class="qbands" aria-hidden="true">
             <span class="qband qband-pur"></span>
             <span class="qband qband-bist"></span>
             <span class="qband qband-unp"></span>
           </div>
           <input id="q-range" type="range" min="0" max="0.2" step="0.00001" value="0.0327" />
-          <div class="qmarks" aria-hidden="true">
-            <span id="qmark-abs" class="qmark qmark-var qmark-abs" title="q_abs(ε)"><i>q<sub>abs</sub></i></span>
-            <span id="qmark-rel" class="qmark qmark-var qmark-rel" title="q_rel(ε)"><i>q<sub>rel</sub></i></span>
-            <span id="qmark-gain" class="qmark qmark-var qmark-gain" title="q_gain(ε)" hidden><i>q<sub>gain</sub></i></span>
-            <span id="qmark-target" class="qmark qmark-var qmark-target" title="q_target(F_target)" hidden><i>q<sub>target</sub></i></span>
-            <span class="qmark qmark-const qmark-bi"><i>q<sub>bi</sub></i></span>
-            <span class="qmark qmark-const qmark-sn"><i>q<sub>SN</sub></i></span>
+          <div class="qmarks">
+            <span id="qmark-abs" class="qmark qmark-var qmark-abs"><i data-tip="abs" tabindex="0" title="">q<sub>abs</sub></i></span>
+            <span id="qmark-rel" class="qmark qmark-var qmark-rel"><i data-tip="rel" tabindex="0" title="">q<sub>rel</sub></i></span>
+            <span id="qmark-gain" class="qmark qmark-var qmark-gain" hidden><i data-tip="fixed" tabindex="0" title="">q<sub>fixed</sub></i></span>
+            <span id="qmark-target" class="qmark qmark-var qmark-target" hidden><i data-tip="target" tabindex="0" title="">q<sub>target</sub></i></span>
+            <span class="qmark qmark-const qmark-bi"><i data-tip="dep" tabindex="0" title="">q<sub>dep</sub></i></span>
+            <span class="qmark qmark-const qmark-sn"><i data-tip="loss" tabindex="0" title="">q<sub>loss</sub></i></span>
           </div>
         </div>
         <input id="q-num" type="number" min="0" max="1" step="0.0001" value="0.0327" />
@@ -140,7 +140,7 @@
       </div>
       <div id="gain-panel" class="panel">
         <div class="panel-head"><h2>Asymptotic Fidelity Gain Threshold</h2></div>
-        <p class="hint">F<sub>∞</sub> &gt; F<sub>0</sub> 판정 (Nov 6 노트, Theorem 7.2). 라운드마다의 증가(q<sub>th</sub>)나 자원 기준과는 다릅니다. q 슬라이더의 초록 눈금이 q<sub>gain</sub>(ε)입니다.</p>
+        <p class="hint">F<sub>∞</sub> &gt; F<sub>0</sub> 판정 (Nov 6 노트, Theorem 7.2). 라운드마다의 증가(q<sub>th</sub>)나 자원 기준과는 다릅니다. q 슬라이더의 초록 눈금이 q<sub>fixed</sub>(ε)입니다.</p>
         <table id="gain" class="kv"></table>
       </div>
       <div id="target-panel" class="panel">
