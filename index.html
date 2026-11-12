@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Type-3 Entanglement Purification Dynamics</title>
+  <script type="module" crossorigin src="/noisy-purification-simulator/assets/index-Dea7_DMj.js"></script>
+  <link rel="stylesheet" crossorigin href="/noisy-purification-simulator/assets/index-DCoz3qUn.css">
+</head>
+<body>
+  <header class="top">
+    <div class="title">
+      <div class="title-row">
+        <h1 id="title">Type-3 noisy entanglement purification — round-by-round dynamics</h1>
+        <div class="seg proto" role="radiogroup" aria-label="Protocol">
+          <label><input type="radio" name="proto" value="type3" checked /> Type 3 — 16 CNOT</label>
+          <label><input type="radio" name="proto" value="type4" /> Type 4 — 14 CNOT</label>
+          <label><input type="radio" name="proto" value="q4" /> 4Q — 5 CNOT</label>
+          <label><input type="radio" name="proto" value="bbpssw" /> Bennett — BBPSSW (2 local CNOT, twirling + postselection)</label>
+        </div>
+      </div>
+      <p class="conv">
+        <span id="gadget">Textbook 16-CNOT gadget</span> · two-qubit replacement depolarizing <i>q</i> after every CNOT ·
+        input (1−ε)|Φ⁺⟩⟨Φ⁺| + ε I/4 · exact map on the invariant plane
+        <span id="plane">u = ⟨XX⟩ = −⟨YY⟩, v = ⟨ZZ⟩, u₀ = v₀ = 1−ε</span>
+      </p>
+      <p id="proto-note" class="conv" hidden>
+        BBPSSW의 F<sub>n</sub>은 앞선 라운드가 모두 성공한 물리적 출력 상태의 값이고, P<sub>succ</sub>는 라운드별 값입니다.
+        Type 3/4는 virtual purification으로 재구성한 유효 상태이므로 F<sub>n</sub>을 비교할 수는 있어도 자원 소모나 성공확률이 같다고 볼 수 없습니다.
+        q는 CNOT당 세기이고 라운드당 CNOT 수가 달라(Type 3: 16, Type 4: 14, 4Q: 5, BBPSSW: 2) 누적 잡음도 다릅니다.
+      </p>
+    </div>
+    <div class="controls">
+      <div class="ctl ctl-eps">
+        <label for="eps-num">Initial noise ε</label>
+        <div id="eps-wrap" class="range-wrap">
+          <input id="eps-range" type="range" min="0" max="1" step="0.0001" value="0.1" />
+          <div class="qmarks" aria-hidden="true">
+            <span id="epsmark" class="emark" hidden><i>ε<sub>c</sub></i></span>
+          </div>
+        </div>
+        <input id="eps-num" type="number" min="0" max="1" step="0.001" value="0.1" />
+        <p class="qth-line f0-line" title="F₀ = 1 − 3ε/4 for (1−ε)|Φ⁺⟩⟨Φ⁺| + ε I/4">Initial Fidelity: <span id="f0" class="num"></span></p>
+      </div>
+      <div class="controls-side">
+        <div class="ctl">
+          <label for="n-num">Rounds N</label>
+          <input id="n-range" type="range" min="1" max="500" step="1" value="30" />
+          <input id="n-num" type="number" min="1" max="500" step="1" value="30" />
+        </div>
+        <div class="ctl">
+          <label for="sel-num" title="round shown in the Round inspector">Round n</label>
+          <input id="sel-range" type="range" min="0" max="30" step="1" value="30" />
+          <input id="sel-num" type="number" min="0" max="30" step="1" value="30" />
+          <p class="qth-line">Round inspector에 표시할 라운드 (기본값 N)</p>
+        </div>
+      </div>
+      <div class="ctl ctl-q">
+        <label for="q-num">CNOT noise q</label>
+        <div id="q-wrap" class="range-wrap" title="bands: green = P_B global attractor (q < q_bi) · amber = bistable (q_bi < q < q_SN) · red = Z global attractor (q > q_SN)">
+          <div class="qbands" aria-hidden="true">
+            <span class="qband qband-pur"></span>
+            <span class="qband qband-bist"></span>
+            <span class="qband qband-unp"></span>
+          </div>
+          <input id="q-range" type="range" min="0" max="0.2" step="0.00001" value="0.0327" />
+          <div class="qmarks" aria-hidden="true">
+            <span id="qmark-abs" class="qmark qmark-var qmark-abs" title="q_abs(ε)"><i>q<sub>abs</sub></i></span>
+            <span id="qmark-rel" class="qmark qmark-var qmark-rel" title="q_rel(ε)"><i>q<sub>rel</sub></i></span>
+            <span id="qmark-gain" class="qmark qmark-var qmark-gain" title="q_gain(ε)" hidden><i>q<sub>gain</sub></i></span>
+            <span id="qmark-target" class="qmark qmark-var qmark-target" title="q_target(F_target)" hidden><i>q<sub>target</sub></i></span>
+            <span class="qmark qmark-const qmark-bi"><i>q<sub>bi</sub></i></span>
+            <span class="qmark qmark-const qmark-sn"><i>q<sub>SN</sub></i></span>
+          </div>
+        </div>
+        <input id="q-num" type="number" min="0" max="1" step="0.0001" value="0.0327" />
+        <label class="chk"><input id="q-full" type="checkbox" /> 0–1</label>
+        <div class="tgt-slot">
+          <span id="tgt-msg" class="tgt-msg" role="status" aria-live="polite"></span>
+          <label for="tgt-num" class="tgt-label" title="asymptotic target: F_∞ ≥ F_target, 1/2 < F_target < 1">Target fidelity F<sub>target</sub></label>
+          <input id="tgt-range" type="range" min="0.5001" max="0.9999" step="0.0001" value="0.9" aria-label="Target fidelity slider" />
+        </div>
+        <input id="tgt-num" type="number" min="0.5" max="1" step="0.0001" value="0.9000" aria-label="Target fidelity" />
+      </div>
+      <ul class="qth-list">
+        <li id="q-thresholds" class="qth-line"></li>
+        <li id="q-gain-line" class="qth-line"></li>
+        <li id="q-target-line" class="qth-line"></li>
+        <li id="q-const" class="qth-line"></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="charts">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Bell fidelity F<sub>n</sub> <span id="mono" class="mono"></span></h2>
+          <div class="seg" role="radiogroup" aria-label="F axis">
+            <label><input type="radio" name="faxis" value="auto" checked /> auto-zoom</label>
+            <label><input type="radio" name="faxis" value="fixed" /> 0–1</label>
+          </div>
+        </div>
+        <div id="chart-f" class="chart chart-lg"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Bell populations p<sub>β</sub><sup>(n)</sup></h2>
+          <span id="pop-hint" class="hint">click legend to show/hide</span>
+        </div>
+        <div id="chart-p" class="chart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Fidelity change ΔF<sub>n</sub> = F<sub>n+1</sub> − F<sub>n</sub></h2>
+          <div class="seg" role="radiogroup" aria-label="dF axis">
+            <label><input type="radio" name="daxis" value="lin" checked /> linear</label>
+            <label><input type="radio" name="daxis" value="asinh" /> signed log</label>
+          </div>
+        </div>
+        <div id="chart-d" class="chart"></div>
+        <p id="precision-warn" class="warn" hidden></p>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="panel">
+        <div class="panel-head"><h2>Summary (rounds 0…N)</h2></div>
+        <table id="summary" class="kv"></table>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Round inspector</h2></div>
+        <p class="hint">select n with the Round n slider at the top, or click a point in any chart · drag across a chart to zoom rounds (y re-fits) · double-click to reset</p>
+        <table id="inspector" class="kv"></table>
+      </div>
+      <div id="attractor-panel" class="panel">
+        <div class="panel-head"><h2>Asymptotic attractor (n → ∞)</h2></div>
+        <p class="hint">증명된 정리에 따른 판정으로, 차트의 라운드별 시뮬레이션과 별개입니다. 끌개가 정해져도 fidelity 증가나 purification 성공을 뜻하지는 않습니다.</p>
+        <table id="attractor" class="kv"></table>
+      </div>
+      <div id="gain-panel" class="panel">
+        <div class="panel-head"><h2>Asymptotic Fidelity Gain Threshold</h2></div>
+        <p class="hint">F<sub>∞</sub> &gt; F<sub>0</sub> 판정 (Nov 6 노트, Theorem 7.2). 라운드마다의 증가(q<sub>th</sub>)나 자원 기준과는 다릅니다. q 슬라이더의 초록 눈금이 q<sub>gain</sub>(ε)입니다.</p>
+        <table id="gain" class="kv"></table>
+      </div>
+      <div id="target-panel" class="panel">
+        <div class="panel-head"><h2>Asymptotic Target-Fidelity Threshold</h2></div>
+        <p class="hint">F<sub>∞</sub> ≥ F<sub>target</sub> 판정 (Nov 6 노트, Theorem 1.1 / 5.1). q<sub>target</sub> = F<sub>B</sub><sup>−1</sup>(F<sub>target</sub>)는 ε와 무관합니다. 유한 라운드의 F<sub>n</sub> ≥ F<sub>target</sub>는 마지막 줄에 따로 표시합니다.</p>
+        <table id="target" class="kv"></table>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="foot">
+    <span>Charts and orbit lines: finite-round numerical evaluation of the exact <span id="foot-map">Type-3 map</span> in IEEE-754 double precision —
+      not an analytic proof or an infinite-round certificate. ε<sub>c</sub> intervals: certified with outward-rounded enclosures.</span>
+    <span id="timing" class="timing"></span>
+  </footer>
+
+</body>
+</html>
