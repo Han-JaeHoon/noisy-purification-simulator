@@ -4,20 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Type-3 Entanglement Purification Dynamics</title>
-  <script type="module" crossorigin src="/noisy-purification-simulator/assets/index-iN051PBB.js"></script>
-  <link rel="stylesheet" crossorigin href="/noisy-purification-simulator/assets/index-12zYiLPf.css">
+  <script type="module" crossorigin src="/noisy-purification-simulator/assets/index-CxKuArbV.js"></script>
+  <link rel="stylesheet" crossorigin href="/noisy-purification-simulator/assets/index-DaYD90tf.css">
 </head>
 <body>
   <header class="top">
     <div class="title">
       <div class="title-row">
         <h1 id="title">Type-3 noisy entanglement purification — round-by-round dynamics</h1>
-        <div class="seg proto" role="radiogroup" aria-label="Protocol">
+        <div class="seg proto" role="radiogroup" aria-label="Protocol" data-tour="protocol">
           <label><input type="radio" name="proto" value="type3" checked /> Type 3 — 16 CNOT</label>
           <label><input type="radio" name="proto" value="type4" /> Type 4 — 14 CNOT</label>
           <label><input type="radio" name="proto" value="q4" /> 4Q — 5 CNOT</label>
           <label><input type="radio" name="proto" value="bbpssw" /> Bennett — BBPSSW (2 local CNOT, twirling + postselection)</label>
         </div>
+        <button id="tour-btn" class="tour-btn" type="button" title="튜토리얼 다시 보기">? Tutorial</button>
       </div>
       <p class="conv">
         <span id="gadget">Textbook 16-CNOT gadget</span> · two-qubit replacement depolarizing <i>q</i> after every CNOT ·
@@ -31,7 +32,7 @@
       </p>
     </div>
     <div class="controls">
-      <div class="ctl ctl-eps">
+      <div class="ctl ctl-eps" data-tour="eps">
         <label for="eps-num">Initial noise ε</label>
         <div id="eps-wrap" class="range-wrap">
           <input id="eps-range" type="range" min="0" max="1" step="0.0001" value="0.1" />
@@ -42,7 +43,7 @@
         <input id="eps-num" type="number" min="0" max="1" step="0.001" value="0.1" />
         <p class="qth-line f0-line" title="F₀ = 1 − 3ε/4 for (1−ε)|Φ⁺⟩⟨Φ⁺| + ε I/4">Initial Fidelity: <span id="f0" class="num"></span></p>
       </div>
-      <div class="controls-side">
+      <div class="controls-side" data-tour="rounds">
         <div class="ctl">
           <label for="n-num">Rounds N</label>
           <input id="n-range" type="range" min="1" max="500" step="1" value="30" />
@@ -82,7 +83,7 @@
         </div>
         <input id="tgt-num" type="number" min="0.5" max="1" step="0.0001" value="0.9000" aria-label="Target fidelity" />
       </div>
-      <ul class="qth-list">
+      <ul class="qth-list" data-tour="q-list">
         <li id="q-thresholds" class="qth-line"></li>
         <li id="q-gain-line" class="qth-line"></li>
         <li id="q-target-line" class="qth-line"></li>
@@ -93,7 +94,7 @@
 
   <main class="layout">
     <section class="charts">
-      <div class="panel">
+      <div class="panel" data-tour="fidelity">
         <div class="panel-head">
           <h2>Bell fidelity F<sub>n</sub> <span id="mono" class="mono"></span></h2>
           <div class="seg" role="radiogroup" aria-label="F axis">
